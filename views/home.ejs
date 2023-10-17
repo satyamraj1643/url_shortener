@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        body{
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1> URL Shortener </h1>
+    <div>
+        <form method="POST", action="/url/create">
+
+       
+        <label>
+            Enter your original URL: 
+        </label>
+        <input type="text", name="url" placeholder="https://example.com">
+        <button  type="submit"> Generate </button>
+    </form>
+    </div>
+  <br>
+  <br>
+  <br>
+
+    <div>
+
+       Want to know about your ID?
+       
+
+       <div>
+        <br>
+        <form method="GET" action="/url/info/analytics/">
+            <label>
+                Enter your ID:
+            </label>
+            <input type="text" name="shortIdEntered">
+            <button type="submit">
+                Know More
+            </button >
+
+           </form>
+
+       </div>
+       
+        
+    </div>
+
+    
+  
+</body>
+</html>

@@ -1,19 +1,19 @@
 const express = require("express");
 const {URL } = require("../models/user")
-const {  handlegenerateNewShortURL, handleShortIDQuery } = require("../controllers/user")
+const {  handlegenerateNewShortURL, handleShortIDQuery, handleAnalytics } = require("../controllers/user")
 const router = express.Router();
 
-router.post("/", handlegenerateNewShortURL);
+router.post("/create", handlegenerateNewShortURL);
+router.get("app/:shortId", handleShortIDQuery);
+router.get("/info/analytics/", handleAnalytics);
+// router.get("/test", async (req,res)=>{
+//   const allurl = await  URL.find({});
+//   console.log(allurl);
 
-router.get("/:shortId", async (req, res) => {
-    const shortId = req.params.shortId;
-    const entry = await URL.findOne({ shortID: shortId });
-    const val = entry.redirectURL;
-    console.log(val);
-    
-    
-  });
-  
+//   return res.render("home", {
+//      urls : allurl
+//   });
+// })
 
 module.exports={
     router,
