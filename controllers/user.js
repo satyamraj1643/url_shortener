@@ -1,92 +1,51 @@
-const { model } = require("mongoose");
-const { URL } = require("../models/user");
-var foxid = require("foxid");
+const {User} = require("../models/user");
+const {setUser, getUser} = require("../service/auth")
+const {v4:uuidv4} = require('uuid');
+
+async function handleUserSignup(req,res){
+
+    const {username, useremail, userpass} = req.body;
+    const userPresent = await User.find({ useremail });
+
+    if (userPresent.length > 0) {
+      // A user with the same email exists, so you might want to handle this case.
+      return res.send("<h3> User Already Exists</h3>");
+    } else {
+      // No user with the same email, so you can create the new user.
+      await User.create({
+        username,
+        useremail,
+        userpass
+      });
+
+      return res.render("home");
+    }
+}
+
+async function handleUserLogin(req, res) {
+    const { useremail, userpass } = req.body;
   
-
-
-async function handlegenerateNewShortURL(req,res){
-   const shortID = foxid(5);
-      const body = req.body;
-      console.log(body.url);
-      if(!body.url) return res.status(400).json({error: "Url is required"});
-
-      const isPresent = await URL.findOne({
-        redirectURL : req.body.url,
-      })
-      console.log(isPresent);
-
-      if(isPresent){
-        res.send(`<h3> An ID already linked to your URL <i><a href="${body.url}">${body.url}</a></i> is:  ${isPresent.shortID}</h3>`)
-        
-        
-      }
-
-      
-      else{
-        await URL.create({
-          shortID : shortID,
-          redirectURL:body.url,
-          visitHistory : [],
-        })
-
-        res.send(`<h3> New Alias Created for ${body.url} : ${shortID}`);
-
-      }
-      
-
-      //console.log(URL.find({}));
-
-
-}
-
-async function handleShortIDQuery(req,res){
-     const shortId = req.params.shortId;
-     console.log(shortId);
-     const entry = await URL.findOneAndUpdate({
-      shortID:shortId
-     },{$push :{
-      visitHistory: {
-        timestamp : Date.now(),
-      }
-     }})
-     console.log(entry.redirectURL);
-     res.redirect(entry.redirectURL);
-    res.json({RedirectURL : `${entry.redirectURL}`});
-    
-}
-
-async function handleAnalytics(req,res){
-   const idasked = req.query.shortIdEntered;
-
-  console.log(idasked);
-
-   const cnt = await URL.findOne({
-    shortID:idasked,
-   })
-
-   if(!cnt){
-    res.send(`<h3> We could not find any associated URL with ${idasked},create one for free by going back!`)
-    
-   }
-   
-   else{
-    const cntval = cnt.visitHistory.length
-    const url = cnt.redirectURL;
-    res.send(`<h3> The URL associated with ${idasked} is <i><a href="${url}">${url}</a></i> and number of times it has been invoked is ${cntval}`);
-    console.log(cntval);
-   }
-   
-   
-
-
+     const user = await User.findOne({useremail, userpass});
+     if(!user){
+        return res.render("login" , {
+            error: "Invalid Username or password"
+        });
   
-}
+     }
+
+     const sessionId = uuidv4();
+     setUser(sessionId,user);
+     res.cookie("uid",sessionId);
+     return res.redirect("/url")
+  }
+  
+    
 
 
 
-module.exports= {
 
-     handlegenerateNewShortURL,
-     handleShortIDQuery,
-     handleAnalytics,
+
+module.exports = {
+    handleUserSignup,
+    handleUserLogin
 }
