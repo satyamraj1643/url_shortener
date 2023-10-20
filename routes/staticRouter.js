@@ -6,8 +6,8 @@ const staticRouter = express.Router();
  staticRouter.get("/url", async (req,res)=>{
     //res.render("")
     console.log("hello from static route");
-    const UserID = req.user._id;
-    console.log(UserID);
+    const UserID = req.user._doc._id;
+    //console.log(req.user._doc._id);
     const objects = [];
      await URL.find({ createdBy: UserID})
      .then((documents)=>{

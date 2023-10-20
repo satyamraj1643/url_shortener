@@ -16,6 +16,7 @@ async function handleUserSignup(req,res){
         username,
         useremail,
         userpass
+        
       });
 
       return res.render("home");
@@ -33,9 +34,9 @@ async function handleUserLogin(req, res) {
   
      }
 
-     const sessionId = uuidv4();
-     setUser(sessionId,user);
-     res.cookie("uid",sessionId);
+     //const sessionId = uuidv4(); (used in past for statefull authentication)
+     const token = setUser(user);
+     res.cookie("uid",token);
      return res.redirect("/url")
   }
   

@@ -6,7 +6,7 @@ var foxid = require("foxid");
 
 async function handlegenerateNewShortURL(req,res){
    const shortID = foxid(5);
-      const userid = req.user._id;
+      const userid = req.user._doc._id;
       const body = req.body;
       console.log(userid);
       if(!body.url) return res.status(400).json({error: "Url is required"});
@@ -27,7 +27,7 @@ async function handlegenerateNewShortURL(req,res){
           shortID : shortID,
           redirectURL:body.url,
           visitHistory : [],
-          createdBy:req.user._id
+          createdBy:userid,
         })
 
         res.send(`<h3> New Alias Created for ${body.url} : ${shortID}`);
